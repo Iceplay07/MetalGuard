@@ -1,0 +1,5 @@
+/mnt/c/Users/mixai/Aurum_Proj/MetalGuard/Данные/build/CMakeFiles/finance.dir
+/mnt/c/Users/mixai/Aurum_Proj/MetalGuard/Данные/build/CMakeFiles/paths.dir
+/mnt/c/Users/mixai/Aurum_Proj/MetalGuard/Данные/build/CMakeFiles/run.dir
+/mnt/c/Users/mixai/Aurum_Proj/MetalGuard/Данные/build/CMakeFiles/edit_cache.dir
+/mnt/c/Users/mixai/Aurum_Proj/MetalGuard/Данные/build/CMakeFiles/rebuild_cache.dir

@@ -9,9 +9,9 @@ ROOT = Path(__file__).resolve().parents[1]
 BUILD_DIR = ROOT / "build"
 
 if platform.system() == "Darwin":
-    LIB_PATH = BUILD_DIR / "libfinance.dylib"
+    LIB_PATH = BUILD_DIR / "lib" / "libfinance.dylib"
 else:
-    LIB_PATH = BUILD_DIR / "libfinance.so"
+    LIB_PATH = BUILD_DIR / "lib" / "libfinance.so"
 
 
 class CAnalysisResult(ctypes.Structure):

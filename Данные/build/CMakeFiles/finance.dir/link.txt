@@ -1,0 +1,1 @@
+/usr/bin/c++ -fPIC -shared -Wl,-soname,libfinance.so -o lib/libfinance.so CMakeFiles/finance.dir/src/analyse/src/analys_finance.cpp.o CMakeFiles/finance.dir/src/analyse/src/building.cpp.o CMakeFiles/finance.dir/src/analyse/main.cpp.o 
