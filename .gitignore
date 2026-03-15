@@ -1,5 +1,6 @@
-.venv/
-build/
+venv/
+Данные/build/
 .DS_Store
+Данные/__pycache__/
 
 
