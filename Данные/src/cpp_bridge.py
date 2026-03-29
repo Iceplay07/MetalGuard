@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import ctypes
 import platform
+import subprocess
 from pathlib import Path
 
 
@@ -12,6 +13,11 @@ if platform.system() == "Darwin":
     LIB_PATH = BUILD_DIR / "libfinance.dylib"
 else:
     LIB_PATH = BUILD_DIR / "libfinance.so"
+
+BUILD_SCRIPT = ROOT / "build.sh"
+
+CPP_AVAILABLE = False
+_lib = None
 
 
 class CAnalysisResult(ctypes.Structure):
@@ -38,14 +44,32 @@ class CAnalysisResult(ctypes.Structure):
     ]
 
 
-_lib = ctypes.CDLL(str(LIB_PATH))
-_lib.analyze_prices.argtypes = [
-    ctypes.POINTER(ctypes.c_double),
-    ctypes.c_int,
-    ctypes.c_int,
-    ctypes.POINTER(CAnalysisResult),
-]
-_lib.analyze_prices.restype = ctypes.c_int
+def _try_load_library():
+    global _lib, CPP_AVAILABLE
+
+    if not LIB_PATH.exists() and BUILD_SCRIPT.exists():
+        try:
+            subprocess.run(["bash", str(BUILD_SCRIPT)], check=True, cwd=str(ROOT))
+        except Exception:
+            pass
+
+    if LIB_PATH.exists():
+        try:
+            _lib = ctypes.CDLL(str(LIB_PATH))
+            _lib.analyze_prices.argtypes = [
+                ctypes.POINTER(ctypes.c_double),
+                ctypes.c_int,
+                ctypes.c_int,
+                ctypes.POINTER(CAnalysisResult),
+            ]
+            _lib.analyze_prices.restype = ctypes.c_int
+            CPP_AVAILABLE = True
+        except OSError:
+            _lib = None
+            CPP_AVAILABLE = False
+
+
+_try_load_library()
 
 
 def _signal_to_str(x: int) -> str:
@@ -55,6 +79,9 @@ def _signal_to_str(x: int) -> str:
 def analyze_series(prices: list[float], n: int = 20) -> dict:
     if not prices:
         raise ValueError("prices is empty")
+
+    if not CPP_AVAILABLE or _lib is None:
+        raise RuntimeError("C++ library is unavailable")
 
     arr = (ctypes.c_double * len(prices))(*prices)
     out = CAnalysisResult()
