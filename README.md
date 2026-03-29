@@ -34,6 +34,6 @@
 
 ### Установка
 ```bash
-git clone https://github.com/ваш-username/cbr-metals-fx-dashboard.git
+git clone https://github.com/Iceplay07/MetalGuard
 cd cbr-metals-fx-dashboard
 pip install -r requirements.txt
