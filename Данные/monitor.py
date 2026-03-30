@@ -10,7 +10,7 @@ from src.charts import make_price_chart
 from src.cpp_signals import render_cpp_summary_section, render_cpp_full_section
 
 
-def is_mobile_device() -> bool:  # CHANGED: автоопределение телефона по User-Agent
+def is_mobile_device() -> bool:
     try:
         headers = st.context.headers
         ua = str(headers.get("User-Agent", "")).lower()
@@ -28,9 +28,46 @@ def is_mobile_device() -> bool:  # CHANGED: автоопределение те�
     return any(marker in ua for marker in mobile_markers)
 
 
-mobile = is_mobile_device()  # CHANGED: определяем устройство заранее
+def apply_quick_range():
+    today = date.today()
+    value = st.session_state.quick_range
 
-st.set_page_config(  # CHANGED: разный layout для телефона и компьютера
+    if value == "Текущий месяц":
+        st.session_state.start_date = date(today.year, today.month, 1)
+        st.session_state.end_date = today
+    elif value == "1 неделя":
+        st.session_state.start_date = today - timedelta(days=7)
+        st.session_state.end_date = today
+    elif value == "1 месяц":
+        st.session_state.start_date = today - timedelta(days=30)
+        st.session_state.end_date = today
+    elif value == "3 месяца":
+        st.session_state.start_date = today - timedelta(days=90)
+        st.session_state.end_date = today
+    elif value == "1 год":
+        st.session_state.start_date = today - timedelta(days=365)
+        st.session_state.end_date = today
+    else:
+        st.session_state.start_date = date(2020, 1, 1)
+        st.session_state.end_date = today
+
+
+def plot_chart(fig):
+    fig.update_layout(dragmode="pan")
+
+    st.plotly_chart(
+        fig,
+        width="stretch",
+        config={
+            "displayModeBar": True,
+            "displaylogo": False,
+        },
+    )
+
+
+mobile = is_mobile_device()
+
+st.set_page_config(
     page_title="CBR Monitor",
     layout="centered" if mobile else "wide",
 )
@@ -44,42 +81,39 @@ def order_codes_popular_first(all_codes: list[str], popular_codes: list[str]) ->
     return popular + others
 
 
-if mobile:  # CHANGED: на телефоне фильтры в expander
+today = date.today()
+month_start = date(today.year, today.month, 1)
+
+if "start_date" not in st.session_state:
+    st.session_state.start_date = month_start
+
+if "end_date" not in st.session_state:
+    st.session_state.end_date = today
+
+if "quick_range" not in st.session_state:
+    st.session_state.quick_range = "Текущий месяц"
+
+
+if mobile:
     with st.expander("Фильтры", expanded=False):
         st.header("Фильтры")
 
-        today = date.today()  # CHANGED
-
-        quick_range = st.segmented_control(  # CHANGED: быстрые кнопки периода
+        st.segmented_control(
             "Быстрый период",
-            options=["1 неделя", "1 месяц", "3 месяца", "1 год", "Всё"],
-            default="Всё",
+            options=["Текущий месяц", "1 неделя", "1 месяц", "3 месяца", "1 год", "Всё"],
             key="quick_range",
+            default="Текущий месяц",
             width="stretch",
+            on_change=apply_quick_range,
         )
-        if quick_range == "1 неделя":  # CHANGED
-            default_start = today - timedelta(days=7)
-            default_end = today
-        elif quick_range == "1 месяц":
-            default_start = today - timedelta(days=30)
-            default_end = today
-        elif quick_range == "3 месяца":
-            default_start = today - timedelta(days=90)
-            default_end = today
-        elif quick_range == "1 год":
-            default_start = today - timedelta(days=365)
-            default_end = today
-        else:
-            default_start = date(2020, 1, 1)
-            default_end = today
 
-        start = st.date_input("Начало", value=default_start, key="start_date")  # CHANGED
-        end = st.date_input("Конец", value=default_end, key="end_date")  # CHANGED
+        start = st.date_input("Начало", key="start_date")
+        end = st.date_input("Конец", key="end_date")
 
         granularity = st.radio(
             "Гранулярность",
             ["День", "Неделя", "Месяц"],
-            horizontal=False,  # CHANGED
+            horizontal=False,
             index=0,
         )
 
@@ -95,7 +129,7 @@ if mobile:  # CHANGED: на телефоне фильтры в expander
         view_mode = st.radio(
             "Показать",
             ["Цена", "Доходность (%)"],
-            horizontal=False,  # CHANGED
+            horizontal=False,
             key="view_mode",
         )
         normalize = st.checkbox("Нормировать (100 в начале)", value=False, key="normalize")
@@ -109,37 +143,22 @@ if mobile:  # CHANGED: на телефоне фильтры в expander
             index=0,
             format_func=lambda x: "каждый день" if x == 1 else f"каждый {x}-й день",
         )
-else:  # CHANGED: на компьютере оставляем sidebar
+else:
     with st.sidebar:
         st.header("Фильтры")
-        today = date.today()  # CHANGED
 
-        quick_range = st.segmented_control(  # CHANGED: быстрый выбор периода
+        st.segmented_control(
             "Быстрый период",
-            options=["1 неделя", "1 месяц", "3 месяца", "1 год", "Всё"],
-            default="Всё",
+            options=["Текущий месяц", "1 неделя", "1 месяц", "3 месяца", "1 год", "Всё"],
             key="quick_range",
+            default="Текущий месяц",
             width="stretch",
+            on_change=apply_quick_range,
         )
 
-        if quick_range == "1 неделя":
-            default_start = today - timedelta(days=7)
-            default_end = today
-        elif quick_range == "1 месяц":
-            default_start = today - timedelta(days=30)
-            default_end = today
-        elif quick_range == "3 месяца":
-            default_start = today - timedelta(days=90)
-            default_end = today
-        elif quick_range == "1 год":
-            default_start = today - timedelta(days=365)
-            default_end = today
-        else:
-            default_start = date(2020, 1, 1)
-            default_end = today
+        start = st.date_input("Начало", key="start_date")
+        end = st.date_input("Конец", key="end_date")
 
-        start = st.date_input("Начало", value=default_start, key="start_date")  # CHANGED
-        end = st.date_input("Конец", value=default_end, key="end_date")  # CHANGED
         granularity = st.radio("Гранулярность", ["День", "Неделя", "Месяц"], horizontal=True, index=0)
 
         signal_n = st.number_input(
@@ -187,22 +206,22 @@ if refresh:
     load_metals.clear()
     load_fx.clear()
     if mobile:
-        st.success("Кэш очищен, данные будут загружены заново.")  # CHANGED
+        st.success("Кэш очищен, данные будут загружены заново.")
     else:
-        st.sidebar.success("Кэш очищен, данные будут загружены заново.")  # CHANGED
+        st.sidebar.success("Кэш очищен, данные будут загружены заново.")
     try:
         st.rerun()
     except Exception:
         st.experimental_rerun()
 
 
-if mobile:  # CHANGED: на телефоне selectbox вместо tabs
+if mobile:
     section = st.selectbox("Раздел", ["Драгметаллы", "Валюты (курс рубля)"])
 else:
     tab_metals, tab_fx = st.tabs(["Драгметаллы", "Валюты (курс рубля)"])
 
 
-if (mobile and section == "Драгметаллы") or (not mobile):  # CHANGED
+if (mobile and section == "Драгметаллы") or (not mobile):
     metal_container = st.container() if mobile else tab_metals
     with metal_container:
         st.subheader("Драгметаллы (ЦБ РФ) — руб/г")
@@ -218,7 +237,7 @@ if (mobile and section == "Драгметаллы") or (not mobile):  # CHANGED
             st.stop()
 
         metals = list(metals_daily.columns)
-        default_metals = metals if not mobile else (metals[:2] if len(metals) >= 2 else metals)  # CHANGED
+        default_metals = metals if not mobile else (metals[:2] if len(metals) >= 2 else metals)
         selected = st.multiselect("Металлы", metals, default=default_metals, key="metals")
 
         if not selected:
@@ -229,7 +248,7 @@ if (mobile and section == "Драгметаллы") or (not mobile):  # CHANGED
             wide_daily=metals_daily,
             selected=selected,
             n=int(signal_n),
-            title=f"Сводка по металлам (n = {signal_n})",
+            title=f"Сводка C++ по металлам (n = {signal_n})",
             empty_message="Недостаточно данных для расчёта сводки по металлам.",
             decimals=2,
         )
@@ -262,20 +281,19 @@ if (mobile and section == "Драгметаллы") or (not mobile):  # CHANGED
         if view_mode == "Цена" and log_scale and not normalize:
             fig.update_yaxes(type="log")
 
-        if mobile:  # CHANGED: на телефоне расширяем полезную область графика
+        if mobile:
             fig.update_yaxes(
-                title_text="",          # CHANGED
-                automargin=False       # CHANGED: отключаем автоотступ
+                title_text="",
+                automargin=False,
             )
             fig.update_xaxes(
-                automargin=False       # CHANGED
+                automargin=False,
             )
-
             fig.update_layout(
                 height=380,
-                margin=dict(l=0, r=0, t=80, b=70),  # CHANGED: было 8/8, теперь почти без боковых полей
+                margin=dict(l=0, r=0, t=65, b=70),
                 title=dict(
-                    pad=dict(t=10, b=0),  # CHANGED: дополнительный отступ у заголовка
+                    pad=dict(t=10, b=0),
                     x=0.5,
                     xanchor="center",
                 ),
@@ -287,25 +305,16 @@ if (mobile and section == "Драгметаллы") or (not mobile):  # CHANGED
                     x=0.5,
                     title_text="",
                 ),
-                dragmode = "pan"
             )
         else:
             fig.update_layout(
                 height=520,
                 margin=dict(l=30, r=30, t=60, b=30),
             )
-            fig.update_layout(dragmode="pan")
 
-        st.plotly_chart(
-            fig,
-            width="stretch",
-            config={
-                "displayModeBar": True,   # CHANGED: панель всегда видна
-                "displaylogo": False,     # CHANGED: убрать логотип Plotly
-            },
-        )
+        plot_chart(fig)
 
-        if mobile:  # CHANGED: на телефоне прячем таблицу
+        if mobile:
             with st.expander("Полная таблица сигналов"):
                 render_cpp_full_section(
                     wide_daily=metals_daily,
@@ -326,7 +335,7 @@ if (mobile and section == "Драгметаллы") or (not mobile):  # CHANGED
             )
 
 
-if (mobile and section == "Валюты (курс рубля)") or (not mobile):  # CHANGED
+if (mobile and section == "Валюты (курс рубля)") or (not mobile):
     fx_container = st.container() if mobile else tab_fx
     with fx_container:
         st.subheader("Валюты (ЦБ РФ)")
@@ -343,7 +352,7 @@ if (mobile and section == "Валюты (курс рубля)") or (not mobile):
         all_codes = order_codes_popular_first(all_codes_catalog, popular_codes)
         default_codes = popular_codes
 
-        if mobile:  # CHANGED: на телефоне без columns
+        if mobile:
             fx_selected = st.multiselect(
                 "Валюты",
                 options=all_codes,
@@ -439,43 +448,40 @@ if (mobile and section == "Валюты (курс рубля)") or (not mobile):
         if view_mode == "Цена" and log_scale and not normalize:
             fig.update_yaxes(type="log")
 
-        if mobile:  # CHANGED: на телефоне расширяем полезную область графика
-            fig.update_yaxes(title_text="")  # CHANGED: убираем подпись оси Y
+        if mobile:
+            fig.update_yaxes(
+                title_text="",
+                automargin=False,
+            )
+            fig.update_xaxes(
+                automargin=False,
+            )
             fig.update_layout(
-                height=380,  # CHANGED
-                margin=dict(l=0, r=0, t=80, b=70),  # CHANGED
+                height=380,
+                margin=dict(l=0, r=0, t=65, b=70),
                 title=dict(
-                    pad=dict(t=10, b=0),  # CHANGED
+                    pad=dict(t=10, b=0),
                     x=0.5,
                     xanchor="center",
                 ),
-                legend=dict(  # CHANGED: легенда вниз
+                legend=dict(
                     orientation="h",
                     yanchor="top",
-                    y=-0.15,
+                    y=-0.22,
                     xanchor="center",
                     x=0.5,
                     title_text="",
                 ),
-                dragmode = "pan"
             )
         else:
             fig.update_layout(
                 height=520,
                 margin=dict(l=30, r=30, t=60, b=30),
             )
-            fig.update_layout(dragmode="pan")
 
-        st.plotly_chart(
-            fig,
-            width="stretch",
-            config={
-                "displayModeBar": True,   # CHANGED: панель всегда видна
-                "displaylogo": False,     # CHANGED: убрать логотип Plotly
-            },
-        )
+        plot_chart(fig)
 
-        if mobile:  # CHANGED: на телефоне прячем таблицу
+        if mobile:
             with st.expander("Полная таблица сигналов"):
                 render_cpp_full_section(
                     wide_daily=fx_daily,

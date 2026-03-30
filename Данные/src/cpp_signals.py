@@ -196,7 +196,8 @@ def render_cpp_summary_section(
         st.info(empty_message)
         return
 
-    st.table(summary_df)
+    summary_df.insert(0, "№", range(1, len(summary_df) + 1))
+    st.dataframe(summary_df, hide_index=True, width="stretch")
 
 
 def render_cpp_full_section(
@@ -216,7 +217,8 @@ def render_cpp_full_section(
         st.info(empty_message)
         return
 
-    st.table(full_df)
+    full_df.insert(0, "№", range(1, len(full_df) + 1))
+    st.dataframe(full_df, hide_index=True, width="stretch")
 
     st.markdown("**Как формируется сигнал**")
     st.caption(
