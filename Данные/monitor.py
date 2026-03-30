@@ -71,7 +71,7 @@ st.title("Мониторинг ЦБ РФ")
 today = date.today()
 
 if "start_date" not in st.session_state:
-    st.session_state.start_date = today - timedelta(days=30)
+    st.session_state.start_date = today - timedelta(days=31)
 
 if "end_date" not in st.session_state:
     st.session_state.end_date = today
