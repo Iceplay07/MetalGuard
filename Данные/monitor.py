@@ -217,8 +217,7 @@ if (mobile and section == "Драгметаллы") or (not mobile):  # CHANGED
                 automargin=False       # CHANGED: отключаем автоотступ
             )
             fig.update_xaxes(
-                automargin=False,       # CHANGED
-                fixedrange=True,        # CHANGED
+                automargin=False       # CHANGED
             )
 
             fig.update_layout(
