@@ -201,7 +201,7 @@ if (mobile and section == "Драгметаллы") or (not mobile):  # CHANGED
         else:
             data = metals_view
             y_label = "руб/г"
-            title = "Цены драгметаллов (руб/г)"
+            title = "Цены драгметаллов (руб/г)\n"
             if normalize:
                 first_row = data.dropna().iloc[0]
                 data = data / first_row * 100.0
