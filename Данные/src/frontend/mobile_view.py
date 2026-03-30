@@ -19,7 +19,7 @@ def plot_chart_mobile(fig):
     fig.update_layout(
         dragmode="pan",
         height=390,
-        margin=dict(l=0, r=2, t=95, b=110),
+        margin=dict(l=4, r=2, t=95, b=110),
         title=dict(
             pad=dict(t=18, b=0),
             x=0.5,
@@ -58,7 +58,7 @@ def plot_chart_mobile(fig):
             "displaylogo": False,
         },
     )
-    
+
 def render_mobile_app(
     load_metals: Callable[[str, str], object],
     load_fx: Callable[[str, str, tuple[str, ...]], object],
