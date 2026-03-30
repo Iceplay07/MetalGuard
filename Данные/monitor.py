@@ -36,7 +36,7 @@ def apply_quick_range():
         st.session_state.start_date = today - timedelta(days=7)
         st.session_state.end_date = today
     elif value == "1 месяц":
-        st.session_state.start_date = today - timedelta(days=31)
+        st.session_state.start_date = today - timedelta(days=32)
         st.session_state.end_date = today
     elif value == "3 месяца":
         st.session_state.start_date = today - timedelta(days=90)
@@ -71,7 +71,7 @@ st.title("Мониторинг ЦБ РФ")
 today = date.today()
 
 if "start_date" not in st.session_state:
-    st.session_state.start_date = today - timedelta(days=31)
+    st.session_state.start_date = today - timedelta(days=32)
 
 if "end_date" not in st.session_state:
     st.session_state.end_date = today
