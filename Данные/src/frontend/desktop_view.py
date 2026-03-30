@@ -42,13 +42,17 @@ def render_desktop_app(
 
         st.segmented_control(
             "Быстрый период",
-            options=["1 неделя", "1 месяц", "3 месяца", "1 год", "Всё"],
+            options=["7 дней", "30 дней", "3 месяца", "1 год", "Всё"],
             key="quick_range",
             width="stretch",
             on_change=apply_quick_range,
         )
 
+    st.subheader("Период")
+    col1, col2 = st.columns(2)
+    with col1:
         start = st.date_input("Начало", key="start_date")
+    with col2:
         end = st.date_input("Конец", key="end_date")
 
         granularity = st.radio("Гранулярность", ["День", "Неделя", "Месяц"], horizontal=True, index=0)
