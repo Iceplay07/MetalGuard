@@ -38,7 +38,6 @@ def plot_chart_mobile(fig):
 
     fig.update_yaxes(
         title_text="",
-        automargin=True,
         ticklabelposition="outside",
         tickfont=dict(size=10),
     )
