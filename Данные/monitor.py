@@ -36,7 +36,7 @@ def apply_quick_range():
         st.session_state.start_date = today - timedelta(days=7)
         st.session_state.end_date = today
     elif value == "1 месяц":
-        st.session_state.start_date = today - timedelta(days=30)
+        st.session_state.start_date = today - timedelta(days=31)
         st.session_state.end_date = today
     elif value == "3 месяца":
         st.session_state.start_date = today - timedelta(days=90)
