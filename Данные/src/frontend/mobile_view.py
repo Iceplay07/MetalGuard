@@ -41,7 +41,7 @@ def plot_chart_mobile(fig):
         automargin=False,
         ticklabelposition="outside",
         tickfont=dict(size=10),
-        tickformat="~s",   # 10000 -> 10k, 1000 -> 1k
+        tickformat="~s",
     )
 
     fig.update_xaxes(
@@ -58,7 +58,7 @@ def plot_chart_mobile(fig):
             "displaylogo": False,
         },
     )
-
+    
 def render_mobile_app(
     load_metals: Callable[[str, str], object],
     load_fx: Callable[[str, str, tuple[str, ...]], object],
