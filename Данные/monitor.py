@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from datetime import date
+from datetime import date, timedelta
 
 import streamlit as st
 
@@ -48,8 +48,34 @@ if mobile:  # CHANGED: на телефоне фильтры в expander
     with st.expander("Фильтры", expanded=False):
         st.header("Фильтры")
 
-        start = st.date_input("Начало", value=date(2020, 1, 1))
-        end = st.date_input("Конец", value=date.today())
+        today = date.today()  # CHANGED
+
+        quick_range = st.segmented_control(  # CHANGED: быстрые кнопки периода
+            "Быстрый период",
+            options=["1 неделя", "1 месяц", "3 месяца", "1 год", "Всё"],
+            default="Всё",
+            key="quick_range",
+            width="stretch",
+        )
+        if quick_range == "1 неделя":  # CHANGED
+            default_start = today - timedelta(days=7)
+            default_end = today
+        elif quick_range == "1 месяц":
+            default_start = today - timedelta(days=30)
+            default_end = today
+        elif quick_range == "3 месяца":
+            default_start = today - timedelta(days=90)
+            default_end = today
+        elif quick_range == "1 год":
+            default_start = today - timedelta(days=365)
+            default_end = today
+        else:
+            default_start = date(2020, 1, 1)
+            default_end = today
+
+        start = st.date_input("Начало", value=default_start, key="start_date")  # CHANGED
+        end = st.date_input("Конец", value=default_end, key="end_date")  # CHANGED
+
         granularity = st.radio(
             "Гранулярность",
             ["День", "Неделя", "Месяц"],
@@ -86,9 +112,34 @@ if mobile:  # CHANGED: на телефоне фильтры в expander
 else:  # CHANGED: на компьютере оставляем sidebar
     with st.sidebar:
         st.header("Фильтры")
+        today = date.today()  # CHANGED
 
-        start = st.date_input("Начало", value=date(2020, 1, 1))
-        end = st.date_input("Конец", value=date.today())
+        quick_range = st.segmented_control(  # CHANGED: быстрый выбор периода
+            "Быстрый период",
+            options=["1 неделя", "1 месяц", "3 месяца", "1 год", "Всё"],
+            default="Всё",
+            key="quick_range",
+            width="stretch",
+        )
+
+        if quick_range == "1 неделя":
+            default_start = today - timedelta(days=7)
+            default_end = today
+        elif quick_range == "1 месяц":
+            default_start = today - timedelta(days=30)
+            default_end = today
+        elif quick_range == "3 месяца":
+            default_start = today - timedelta(days=90)
+            default_end = today
+        elif quick_range == "1 год":
+            default_start = today - timedelta(days=365)
+            default_end = today
+        else:
+            default_start = date(2020, 1, 1)
+            default_end = today
+
+        start = st.date_input("Начало", value=default_start, key="start_date")  # CHANGED
+        end = st.date_input("Конец", value=default_end, key="end_date")  # CHANGED
         granularity = st.radio("Гранулярность", ["День", "Неделя", "Месяц"], horizontal=True, index=0)
 
         signal_n = st.number_input(
@@ -245,7 +296,14 @@ if (mobile and section == "Драгметаллы") or (not mobile):  # CHANGED
             )
             fig.update_layout(dragmode="pan")
 
-        st.plotly_chart(fig, width="stretch")
+        st.plotly_chart(
+            fig,
+            width="stretch",
+            config={
+                "displayModeBar": True,   # CHANGED: панель всегда видна
+                "displaylogo": False,     # CHANGED: убрать логотип Plotly
+            },
+        )
 
         if mobile:  # CHANGED: на телефоне прячем таблицу
             with st.expander("Полная таблица сигналов"):
@@ -408,7 +466,14 @@ if (mobile and section == "Валюты (курс рубля)") or (not mobile):
             )
             fig.update_layout(dragmode="pan")
 
-        st.plotly_chart(fig, width="stretch")
+        st.plotly_chart(
+            fig,
+            width="stretch",
+            config={
+                "displayModeBar": True,   # CHANGED: панель всегда видна
+                "displaylogo": False,     # CHANGED: убрать логотип Plotly
+            },
+        )
 
         if mobile:  # CHANGED: на телефоне прячем таблицу
             with st.expander("Полная таблица сигналов"):
