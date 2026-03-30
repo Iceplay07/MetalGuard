@@ -41,19 +41,8 @@ def render_desktop_app(
     """
     <style>
     section[data-testid="stSidebar"] {
-        overflow: visible !important;
-    }
-
-    section[data-testid="stSidebar"] > div {
-        overflow: visible !important;
-    }
-
-    section[data-testid="stSidebar"] .stDateInput {
-        overflow: visible !important;
-    }
-
-    section[data-testid="stSidebar"] [data-baseweb="popover"] {
-        z-index: 99999 !important;
+        min-width: 360px !important;
+        width: 360px !important;
     }
     </style>
     """,
