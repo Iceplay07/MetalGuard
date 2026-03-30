@@ -282,14 +282,14 @@ if (mobile and section == "Драгметаллы") or (not mobile):
         if mobile:
             fig.update_yaxes(
                 title_text="",
-                automargin=False,
+                automargin=True,
             )
             fig.update_xaxes(
                 automargin=False,
             )
             fig.update_layout(
                 height=380,
-                margin=dict(l=0, r=0, t=65, b=70),
+                margin=dict(l=28, r=6, t=65, b=70),
                 title=dict(
                     pad=dict(t=10, b=0),
                     x=0.5,
@@ -447,16 +447,17 @@ if (mobile and section == "Валюты (курс рубля)") or (not mobile):
             fig.update_yaxes(type="log")
 
         if mobile:
+           if mobile:
             fig.update_yaxes(
                 title_text="",
-                automargin=False,
+                automargin=True,
             )
             fig.update_xaxes(
                 automargin=False,
             )
             fig.update_layout(
                 height=380,
-                margin=dict(l=0, r=0, t=65, b=70),
+                margin=dict(l=28, r=6, t=65, b=70),
                 title=dict(
                     pad=dict(t=10, b=0),
                     x=0.5,
