@@ -236,6 +236,7 @@ if (mobile and section == "Драгметаллы") or (not mobile):  # CHANGED
                     x=0.5,
                     title_text="",
                 ),
+                dragmode = "pan"
             )
         else:
             fig.update_layout(
@@ -397,6 +398,7 @@ if (mobile and section == "Валюты (курс рубля)") or (not mobile):
                     x=0.5,
                     title_text="",
                 ),
+                dragmode = "pan"
             )
         else:
             fig.update_layout(
