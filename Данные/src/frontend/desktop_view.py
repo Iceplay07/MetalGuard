@@ -37,22 +37,40 @@ def render_desktop_app(
     load_fx: Callable[[str, str, tuple[str, ...]], object],
     apply_quick_range: Callable[[], None],
 ):
+    st.markdown(
+    """
+    <style>
+    section[data-testid="stSidebar"] {
+        overflow: visible !important;
+    }
+
+    section[data-testid="stSidebar"] > div {
+        overflow: visible !important;
+    }
+
+    section[data-testid="stSidebar"] .stDateInput {
+        overflow: visible !important;
+    }
+
+    section[data-testid="stSidebar"] [data-baseweb="popover"] {
+        z-index: 99999 !important;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True,
+)
     with st.sidebar:
         st.header("Фильтры")
 
         st.segmented_control(
             "Быстрый период",
-            options=["7 дней", "30 дней", "3 месяца", "1 год", "Всё"],
+            options=["1 неделя", "1 месяц", "3 месяца", "1 год", "Всё"],
             key="quick_range",
             width="stretch",
             on_change=apply_quick_range,
         )
 
-    st.subheader("Период")
-    col1, col2 = st.columns(2)
-    with col1:
         start = st.date_input("Начало", key="start_date")
-    with col2:
         end = st.date_input("Конец", key="end_date")
 
         granularity = st.radio("Гранулярность", ["День", "Неделя", "Месяц"], horizontal=True, index=0)
