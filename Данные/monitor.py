@@ -102,7 +102,6 @@ if mobile:
             "Быстрый период",
             options=["Текущий месяц", "1 неделя", "1 месяц", "3 месяца", "1 год", "Всё"],
             key="quick_range",
-            default="Текущий месяц",
             width="stretch",
             on_change=apply_quick_range,
         )
@@ -151,7 +150,6 @@ else:
             "Быстрый период",
             options=["Текущий месяц", "1 неделя", "1 месяц", "3 месяца", "1 год", "Всё"],
             key="quick_range",
-            default="Текущий месяц",
             width="stretch",
             on_change=apply_quick_range,
         )
