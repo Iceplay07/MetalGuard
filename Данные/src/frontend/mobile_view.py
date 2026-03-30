@@ -44,7 +44,6 @@ def plot_chart_mobile(fig):
     )
 
     fig.update_xaxes(
-        automargin=True,
         tickfont=dict(size=10),
         nticks=4,
     )
