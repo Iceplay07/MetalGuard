@@ -4,8 +4,8 @@ from typing import Callable
 
 import streamlit as st
 
-from src.cbr_fx import load_currency_catalog, DEFAULT_CURRENCIES
-from src.charts import make_price_chart
+from src.backend.cbr_fx import load_currency_catalog, DEFAULT_CURRENCIES
+from src.backend.charts import make_price_chart
 from src.cpp_signals import render_cpp_summary_section, render_cpp_full_section
 
 
@@ -15,35 +15,11 @@ def order_codes_popular_first(all_codes: list[str], popular_codes: list[str]) ->
     return popular + others
 
 
-def plot_chart_mobile(fig):
+def plot_chart_desktop(fig):
     fig.update_layout(
         dragmode="pan",
-        height=390,
-        margin=dict(l=8, r=4, t=65, b=105),
-        title=dict(
-            pad=dict(t=10, b=0),
-            x=0.5,
-            xanchor="center",
-        ),
-        legend=dict(
-            orientation="h",
-            yanchor="top",
-            y=-0.34,
-            xanchor="center",
-            x=0.5,
-            title_text="",
-        ),
-    )
-    fig.update_yaxes(
-        title_text="",
-        automargin=True,
-        ticklabelposition="outside",
-        tickfont=dict(size=10),
-    )
-    fig.update_xaxes(
-        automargin=True,
-        tickfont=dict(size=10),
-        nticks=4,
+        height=520,
+        margin=dict(l=30, r=30, t=60, b=30),
     )
 
     st.plotly_chart(
@@ -56,12 +32,12 @@ def plot_chart_mobile(fig):
     )
 
 
-def render_mobile_app(
+def render_desktop_app(
     load_metals: Callable[[str, str], object],
     load_fx: Callable[[str, str, tuple[str, ...]], object],
     apply_quick_range: Callable[[], None],
 ):
-    with st.expander("Фильтры", expanded=False):
+    with st.sidebar:
         st.header("Фильтры")
 
         st.segmented_control(
@@ -75,12 +51,7 @@ def render_mobile_app(
         start = st.date_input("Начало", key="start_date")
         end = st.date_input("Конец", key="end_date")
 
-        granularity = st.radio(
-            "Гранулярность",
-            ["День", "Неделя", "Месяц"],
-            horizontal=False,
-            index=0,
-        )
+        granularity = st.radio("Гранулярность", ["День", "Неделя", "Месяц"], horizontal=True, index=0)
 
         signal_n = st.number_input(
             "Период анализа n (дней)",
@@ -91,12 +62,7 @@ def render_mobile_app(
             help="За сколько последних дней C++-модуль считает среднюю цену и сигнал.",
         )
 
-        view_mode = st.radio(
-            "Показать",
-            ["Цена", "Доходность (%)"],
-            horizontal=False,
-            key="view_mode",
-        )
+        view_mode = st.radio("Показать", ["Цена", "Доходность (%)"], horizontal=True, key="view_mode")
         normalize = st.checkbox("Нормировать (100 в начале)", value=False, key="normalize")
         log_scale = st.checkbox("Логарифмическая шкала", value=False, key="log_scale")
 
@@ -119,15 +85,15 @@ def render_mobile_app(
     if refresh:
         load_metals.clear()
         load_fx.clear()
-        st.success("Кэш очищен, данные будут загружены заново.")
+        st.sidebar.success("Кэш очищен, данные будут загружены заново.")
         try:
             st.rerun()
         except Exception:
             st.experimental_rerun()
 
-    section = st.selectbox("Раздел", ["Драгметаллы", "Валюты (курс рубля)"])
+    tab_metals, tab_fx = st.tabs(["Драгметаллы", "Валюты (курс рубля)"])
 
-    if section == "Драгметаллы":
+    with tab_metals:
         st.subheader("Драгметаллы (ЦБ РФ) — руб/г")
 
         with st.spinner("Загружаю данные драгметаллов ЦБ РФ..."):
@@ -141,8 +107,7 @@ def render_mobile_app(
             st.stop()
 
         metals = list(metals_daily.columns)
-        default_metals = metals[:2] if len(metals) >= 2 else metals
-        selected = st.multiselect("Металлы", metals, default=default_metals, key="metals")
+        selected = st.multiselect("Металлы", metals, default=metals, key="metals")
 
         if not selected:
             st.info("Выбери хотя бы один металл.")
@@ -186,19 +151,18 @@ def render_mobile_app(
         if view_mode == "Цена" and log_scale and not normalize:
             fig.update_yaxes(type="log")
 
-        plot_chart_mobile(fig)
+        plot_chart_desktop(fig)
 
-        with st.expander("Полная таблица сигналов"):
-            render_cpp_full_section(
-                wide_daily=metals_daily,
-                selected=selected,
-                n=int(signal_n),
-                title=f"Полная таблица сигналов по металлам (n = {signal_n})",
-                empty_message="Недостаточно данных для расчёта полной таблицы по металлам.",
-                decimals=2,
-            )
+        render_cpp_full_section(
+            wide_daily=metals_daily,
+            selected=selected,
+            n=int(signal_n),
+            title=f"Полная таблица сигналов по металлам (n = {signal_n})",
+            empty_message="Недостаточно данных для расчёта полной таблицы по металлам.",
+            decimals=2,
+        )
 
-    else:
+    with tab_fx:
         st.subheader("Валюты (ЦБ РФ)")
 
         with st.spinner("Загружаю справочник валют..."):
@@ -213,20 +177,22 @@ def render_mobile_app(
         all_codes = order_codes_popular_first(all_codes_catalog, popular_codes)
         default_codes = popular_codes
 
-        fx_selected = st.multiselect(
-            "Валюты",
-            options=all_codes,
-            default=default_codes,
-            format_func=lambda c: f"{c} — {catalog.loc[c, 'name']}",
-            key="fx_codes",
-        )
-        fx_quote = st.radio(
-            "Вид котировки",
-            ["RUB за 1 валюту", "Валюты за 1 RUB"],
-            index=0,
-            key="fx_quote",
-            horizontal=False,
-        )
+        col_a, col_b = st.columns([2, 1])
+        with col_a:
+            fx_selected = st.multiselect(
+                "Валюты",
+                options=all_codes,
+                default=default_codes,
+                format_func=lambda c: f"{c} — {catalog.loc[c, 'name']}",
+                key="fx_codes",
+            )
+        with col_b:
+            fx_quote = st.radio(
+                "Вид котировки",
+                ["RUB за 1 валюту", "Валюты за 1 RUB"],
+                index=0,
+                key="fx_quote",
+            )
 
         if not fx_selected:
             st.info("Выбери хотя бы одну валюту.")
@@ -292,14 +258,13 @@ def render_mobile_app(
         if view_mode == "Цена" and log_scale and not normalize:
             fig.update_yaxes(type="log")
 
-        plot_chart_mobile(fig)
+        plot_chart_desktop(fig)
 
-        with st.expander("Полная таблица сигналов"):
-            render_cpp_full_section(
-                wide_daily=fx_daily,
-                selected=fx_available,
-                n=int(signal_n),
-                title=f"Полная таблица сигналов по валютам (n = {signal_n})",
-                empty_message="Недостаточно данных для расчёта полной таблицы по валютам.",
-                decimals=4,
-            )
+        render_cpp_full_section(
+            wide_daily=fx_daily,
+            selected=fx_available,
+            n=int(signal_n),
+            title=f"Полная таблица сигналов по валютам (n = {signal_n})",
+            empty_message="Недостаточно данных для расчёта полной таблицы по валютам.",
+            decimals=4,
+        )
