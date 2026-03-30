@@ -19,7 +19,7 @@ def plot_chart_mobile(fig):
     fig.update_layout(
         dragmode="pan",
         height=390,
-        margin=dict(l=18, r=2, t=95, b=110),
+        margin=dict(l=12, r=2, t=95, b=110),
         title=dict(
             pad=dict(t=18, b=0),
             x=0.5,
