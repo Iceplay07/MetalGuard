@@ -243,6 +243,7 @@ if (mobile and section == "Драгметаллы") or (not mobile):  # CHANGED
                 height=520,
                 margin=dict(l=30, r=30, t=60, b=30),
             )
+            fig.update_layout(dragmode="pan")
 
         st.plotly_chart(fig, width="stretch")
 
@@ -405,6 +406,7 @@ if (mobile and section == "Валюты (курс рубля)") or (not mobile):
                 height=520,
                 margin=dict(l=30, r=30, t=60, b=30),
             )
+            fig.update_layout(dragmode="pan")
 
         st.plotly_chart(fig, width="stretch")
 
