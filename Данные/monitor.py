@@ -211,15 +211,25 @@ if (mobile and section == "Драгметаллы") or (not mobile):  # CHANGED
         if view_mode == "Цена" and log_scale and not normalize:
             fig.update_yaxes(type="log")
 
-        fig.update_layout(  # CHANGED: разный размер графика
-            height=320 if mobile else 520,
-            margin=dict(
-                l=10 if mobile else 30,
-                r=10 if mobile else 30,
-                t=40 if mobile else 60,
-                b=10 if mobile else 30,
-            ),
-        )
+        if mobile:  # CHANGED: на телефоне расширяем полезную область графика
+            fig.update_yaxes(title_text="")  # CHANGED: убираем подпись оси Y
+            fig.update_layout(
+                height=380,  # CHANGED: было меньше
+                margin=dict(l=8, r=8, t=40, b=70),  # CHANGED: меньше боковые поля, больше снизу под легенду
+                legend=dict(  # CHANGED: легенда переносится вниз
+                    orientation="h",
+                    yanchor="top",
+                    y=-0.22,
+                    xanchor="center",
+                    x=0.5,
+                    title_text="",
+                ),
+            )
+        else:
+            fig.update_layout(
+                height=520,
+                margin=dict(l=30, r=30, t=60, b=30),
+            )
 
         st.plotly_chart(fig, width="stretch")
 
@@ -357,15 +367,25 @@ if (mobile and section == "Валюты (курс рубля)") or (not mobile):
         if view_mode == "Цена" and log_scale and not normalize:
             fig.update_yaxes(type="log")
 
-        fig.update_layout(  # CHANGED: разный размер графика
-            height=320 if mobile else 520,
-            margin=dict(
-                l=10 if mobile else 30,
-                r=10 if mobile else 30,
-                t=40 if mobile else 60,
-                b=10 if mobile else 30,
-            ),
-        )
+        if mobile:  # CHANGED: на телефоне расширяем полезную область графика
+            fig.update_yaxes(title_text="")  # CHANGED: убираем подпись оси Y
+            fig.update_layout(
+                height=380,  # CHANGED
+                margin=dict(l=8, r=8, t=40, b=70),  # CHANGED
+                legend=dict(  # CHANGED: легенда вниз
+                    orientation="h",
+                    yanchor="top",
+                    y=-0.22,
+                    xanchor="center",
+                    x=0.5,
+                    title_text="",
+                ),
+            )
+        else:
+            fig.update_layout(
+                height=520,
+                margin=dict(l=30, r=30, t=60, b=30),
+            )
 
         st.plotly_chart(fig, width="stretch")
 
