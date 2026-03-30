@@ -276,6 +276,12 @@ if (mobile and section == "Драгметаллы") or (not mobile):
                 y_label = "индекс (100 = начало)"
 
         fig = make_price_chart(data, title=title, y_title=y_label, series_name="metal")
+        fig.update_yaxes(
+            title_text="",
+            automargin=False,
+            ticklabelposition="outside",
+            tickfont=dict(size=10),
+        )
         if view_mode == "Цена" and log_scale and not normalize:
             fig.update_yaxes(type="log")
 
@@ -445,6 +451,12 @@ if (mobile and section == "Валюты (курс рубля)") or (not mobile):
                 y_label = "индекс (100 = начало)"
 
         fig = make_price_chart(data_fx, title=title, y_title=y_label, series_name="ccy")
+        fig.update_yaxes(
+            title_text="",
+            automargin=False,
+            ticklabelposition="outside",
+            tickfont=dict(size=10),
+        )
         if view_mode == "Цена" and log_scale and not normalize:
             fig.update_yaxes(type="log")
 
