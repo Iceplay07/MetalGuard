@@ -280,30 +280,32 @@ if (mobile and section == "Драгметаллы") or (not mobile):
             fig.update_yaxes(type="log")
 
         if mobile:
-            fig.update_yaxes(
-                title_text="",
-                automargin=True,
-            )
-            fig.update_xaxes(
-                automargin=False,
-            )
-            fig.update_layout(
-                height=380,
-                margin=dict(l=28, r=6, t=65, b=70),
-                title=dict(
-                    pad=dict(t=10, b=0),
-                    x=0.5,
-                    xanchor="center",
-                ),
-                legend=dict(
-                    orientation="h",
-                    yanchor="top",
-                    y=-0.22,
-                    xanchor="center",
-                    x=0.5,
+            if mobile:
+                fig.update_yaxes(
                     title_text="",
-                ),
-            )
+                    automargin=True,
+                    ticklabelposition="outside",
+                )
+                fig.update_xaxes(
+                    automargin=False,
+                )
+                fig.update_layout(
+                    height=380,
+                    margin=dict(l=10, r=4, t=65, b=70),
+                    title=dict(
+                        pad=dict(t=10, b=0),
+                        x=0.5,
+                        xanchor="center",
+                    ),
+                    legend=dict(
+                        orientation="h",
+                        yanchor="top",
+                        y=-0.22,
+                        xanchor="center",
+                        x=0.5,
+                        title_text="",
+                    ),
+                )
         else:
             fig.update_layout(
                 height=520,
@@ -448,30 +450,32 @@ if (mobile and section == "Валюты (курс рубля)") or (not mobile):
 
         if mobile:
            if mobile:
-            fig.update_yaxes(
-                title_text="",
-                automargin=True,
-            )
-            fig.update_xaxes(
-                automargin=False,
-            )
-            fig.update_layout(
-                height=380,
-                margin=dict(l=28, r=6, t=65, b=70),
-                title=dict(
-                    pad=dict(t=10, b=0),
-                    x=0.5,
-                    xanchor="center",
-                ),
-                legend=dict(
-                    orientation="h",
-                    yanchor="top",
-                    y=-0.22,
-                    xanchor="center",
-                    x=0.5,
+            if mobile:
+                fig.update_yaxes(
                     title_text="",
-                ),
-            )
+                    automargin=True,
+                    ticklabelposition="outside",
+                )
+                fig.update_xaxes(
+                    automargin=False,
+                )
+                fig.update_layout(
+                    height=380,
+                    margin=dict(l=10, r=4, t=65, b=70),
+                    title=dict(
+                        pad=dict(t=10, b=0),
+                        x=0.5,
+                        xanchor="center",
+                    ),
+                    legend=dict(
+                        orientation="h",
+                        yanchor="top",
+                        y=-0.22,
+                        xanchor="center",
+                        x=0.5,
+                        title_text="",
+                    ),
+                )
         else:
             fig.update_layout(
                 height=520,
