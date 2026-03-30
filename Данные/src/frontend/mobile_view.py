@@ -19,7 +19,7 @@ def plot_chart_mobile(fig):
     fig.update_layout(
         dragmode="pan",
         height=390,
-        margin=dict(l=4, r=2, t=95, b=110),
+        margin=dict(l=6, r=2, t=95, b=110),
         title=dict(
             pad=dict(t=18, b=0),
             x=0.5,
@@ -38,11 +38,14 @@ def plot_chart_mobile(fig):
 
     fig.update_yaxes(
         title_text="",
+        automargin=False,
         ticklabelposition="outside",
         tickfont=dict(size=10),
+        tickformat="~s",   # 10000 -> 10k, 1000 -> 1k
     )
 
     fig.update_xaxes(
+        automargin=True,
         tickfont=dict(size=10),
         nticks=4,
     )
@@ -55,7 +58,6 @@ def plot_chart_mobile(fig):
             "displaylogo": False,
         },
     )
-
 
 def render_mobile_app(
     load_metals: Callable[[str, str], object],
