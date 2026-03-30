@@ -32,10 +32,7 @@ def apply_quick_range():
     today = date.today()
     value = st.session_state.quick_range
 
-    if value == "Текущий месяц":
-        st.session_state.start_date = date(today.year, today.month, 1)
-        st.session_state.end_date = today
-    elif value == "1 неделя":
+    if value == "1 неделя":
         st.session_state.start_date = today - timedelta(days=7)
         st.session_state.end_date = today
     elif value == "1 месяц":
@@ -72,16 +69,15 @@ st.set_page_config(
 st.title("Мониторинг ЦБ РФ")
 
 today = date.today()
-month_start = date(today.year, today.month, 1)
 
 if "start_date" not in st.session_state:
-    st.session_state.start_date = month_start
+    st.session_state.start_date = today - timedelta(days=30)
 
 if "end_date" not in st.session_state:
     st.session_state.end_date = today
 
 if "quick_range" not in st.session_state:
-    st.session_state.quick_range = "Текущий месяц"
+    st.session_state.quick_range = "30 дней"
 
 common_kwargs = {
     "load_metals": load_metals,

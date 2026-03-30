@@ -42,7 +42,7 @@ def render_desktop_app(
 
         st.segmented_control(
             "Быстрый период",
-            options=["Текущий месяц", "1 неделя", "1 месяц", "3 месяца", "1 год", "Всё"],
+            options=["1 неделя", "1 месяц", "3 месяца", "1 год", "Всё"],
             key="quick_range",
             width="stretch",
             on_change=apply_quick_range,

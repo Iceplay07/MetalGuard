@@ -19,27 +19,30 @@ def plot_chart_mobile(fig):
     fig.update_layout(
         dragmode="pan",
         height=390,
-        margin=dict(l=8, r=4, t=65, b=105),
+        margin=dict(l=2, r=2, t=95, b=110),
         title=dict(
-            pad=dict(t=10, b=0),
+            pad=dict(t=18, b=0),
             x=0.5,
             xanchor="center",
+            y=0.96,
         ),
         legend=dict(
             orientation="h",
             yanchor="top",
-            y=-0.34,
+            y=-0.38,
             xanchor="center",
             x=0.5,
             title_text="",
         ),
     )
+
     fig.update_yaxes(
         title_text="",
-        automargin=True,
+        automargin=False,
         ticklabelposition="outside",
         tickfont=dict(size=10),
     )
+
     fig.update_xaxes(
         automargin=True,
         tickfont=dict(size=10),
@@ -66,7 +69,7 @@ def render_mobile_app(
 
         st.segmented_control(
             "Быстрый период",
-            options=["Текущий месяц", "1 неделя", "1 месяц", "3 месяца", "1 год", "Всё"],
+            options=["1 неделя", "1 месяц", "3 месяца", "1 год", "Всё"],
             key="quick_range",
             width="stretch",
             on_change=apply_quick_range,
