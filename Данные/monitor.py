@@ -178,7 +178,7 @@ if (mobile and section == "Драгметаллы") or (not mobile):  # CHANGED
             wide_daily=metals_daily,
             selected=selected,
             n=int(signal_n),
-            title=f"Сводка C++ по металлам (n = {signal_n})",
+            title=f"Сводка по металлам (n = {signal_n})",
             empty_message="Недостаточно данных для расчёта сводки по металлам.",
             decimals=2,
         )
@@ -212,11 +212,20 @@ if (mobile and section == "Драгметаллы") or (not mobile):  # CHANGED
             fig.update_yaxes(type="log")
 
         if mobile:  # CHANGED: на телефоне расширяем полезную область графика
-            fig.update_yaxes(title_text="")  # CHANGED: убираем подпись оси Y
+            fig.update_yaxes(
+                title_text="",          # CHANGED
+                automargin=False,       # CHANGED: отключаем автоотступ
+                fixedrange=True,        # CHANGED: необязательно, но удобно на телефоне
+            )
+            fig.update_xaxes(
+                automargin=False,       # CHANGED
+                fixedrange=True,        # CHANGED
+            )
+
             fig.update_layout(
-                height=380,  # CHANGED: было меньше
-                margin=dict(l=8, r=8, t=40, b=70),  # CHANGED: меньше боковые поля, больше снизу под легенду
-                legend=dict(  # CHANGED: легенда переносится вниз
+                height=380,
+                margin=dict(l=0, r=0, t=40, b=70),  # CHANGED: было 8/8, теперь почти без боковых полей
+                legend=dict(
                     orientation="h",
                     yanchor="top",
                     y=-0.22,
