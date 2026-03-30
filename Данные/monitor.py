@@ -214,8 +214,7 @@ if (mobile and section == "Драгметаллы") or (not mobile):  # CHANGED
         if mobile:  # CHANGED: на телефоне расширяем полезную область графика
             fig.update_yaxes(
                 title_text="",          # CHANGED
-                automargin=False,       # CHANGED: отключаем автоотступ
-                fixedrange=True,        # CHANGED: необязательно, но удобно на телефоне
+                automargin=False       # CHANGED: отключаем автоотступ
             )
             fig.update_xaxes(
                 automargin=False,       # CHANGED
@@ -384,7 +383,7 @@ if (mobile and section == "Валюты (курс рубля)") or (not mobile):
                 legend=dict(  # CHANGED: легенда вниз
                     orientation="h",
                     yanchor="top",
-                    y=-0.22,
+                    y=-0.15,
                     xanchor="center",
                     x=0.5,
                     title_text="",
