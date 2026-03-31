@@ -37,17 +37,21 @@ def render_desktop_app(
     load_fx: Callable[[str, str, tuple[str, ...]], object],
     apply_quick_range: Callable[[], None],
 ):
-    st.markdown(
-    """
-    <style>
-    section[data-testid="stSidebar"] {
-        min-width: 360px !important;
-        width: 360px !important;
-    }
-    </style>
-    """,
-    unsafe_allow_html=True,
-)
+    st.markdown("""
+        <style>
+        /* Только для раскрытого сайдбара */
+        section[data-testid="stSidebar"][aria-expanded="true"] {
+            min-width: 320px !important;
+            width: 320px !important;
+        }
+
+        /* Для свернутого не ломаем layout */
+        section[data-testid="stSidebar"][aria-expanded="false"] {
+            min-width: auto !important;
+            width: auto !important;
+        }
+        </style>
+        """, unsafe_allow_html=True)
     with st.sidebar:
         st.header("Фильтры")
 
